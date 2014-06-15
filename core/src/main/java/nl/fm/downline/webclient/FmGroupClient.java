@@ -1,5 +1,7 @@
 package nl.fm.downline.webclient;
 
+import nl.fm.downline.common.Retour;
+
 /**
  * @author Ruud de Jong
  */
@@ -12,6 +14,6 @@ public interface FmGroupClient {
      * @param password het wachtwoord.
      * @return de gegevens of een foutmelding.
      */
-    String start(String username, String password);
+    Retour<String, String> start(String username, String password);
 
 }

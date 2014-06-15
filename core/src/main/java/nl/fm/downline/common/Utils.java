@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +68,44 @@ public final class Utils {
         return builder.toString();
     }
 
+    public static String[] split(String str, String separator) {
+        if (str == null) {
+            return null;
+        }
+        if (separator == null || separator.length() != 1) {
+            return null;
+        }
+        int len = str.length();
+        if (len == 0) {
+            return EMPTY_STRING_ARRAY;
+        }
+        List<String> list = new ArrayList<String>();
+        int sizePlus1 = 1;
+        int i = 0, start = 0;
+        boolean match = false;
+        // Optimise 1 character case
+        char sep = separator.charAt(0);
+        while (i < len) {
+            if (str.charAt(i) == sep) {
+                if (match) {
+                    if (sizePlus1++ == 0) {
+                        i = len;
+                    }
+                    list.add(str.substring(start, i));
+                    match = false;
+                }
+                start = ++i;
+                continue;
+            }
+            match = true;
+            i++;
+        }
+        if (match) {
+            list.add(str.substring(start, i));
+        }
+        return list.toArray(new String[list.size()]);
+    }
+
     public static String substringBefore(String str, String separator) {
         if (isEmpty(str) || separator == null) {
             return str;
@@ -122,6 +163,16 @@ public final class Utils {
             return null;
         }
         return (String[]) list.toArray(new String [list.size()]);
+    }
+
+    public static int parseGetal(String getal) throws ParseException {
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setGroupingSeparator('.');
+        dfs.setDecimalSeparator(',');
+        DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.setDecimalFormatSymbols(dfs);
+        Number number = decimalFormat.parse(getal);
+        return number.intValue();
     }
 
 }

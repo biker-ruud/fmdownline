@@ -1,5 +1,6 @@
 package nl.fm.downline.webclient;
 
+import nl.fm.downline.common.Retour;
 import nl.fm.downline.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,19 +16,16 @@ import java.util.List;
 /**
  * @author Ruud de Jong
  */
-public class FmGroupClientImpl implements FmGroupClient {
+public final class FmGroupClientImpl implements FmGroupClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(FmGroupClientImpl.class);
     private static final String HOST = "www.fmgroup.nl";
     private static final String MIJN_OVERZICHT = "/user-zone-nl/mijn-rekening.html";
     private static final String CSV_DOWNLOAD_LINK_START = "http://mlm.perfumy.fm";
-           //http://www.fmgroup.nl/user-zone-nl/mijn-rekening.html
-           //http://www.fmgroup.nl/user-zone/new-tree
-//    http://mlm.perfumy.fm:10043/Tree1/FExport.aspx?param=15500252;6;2014;NL&code=572e563bbd997ca6c4b27719076f8ebb
     private String username;
     private String password;
 
     @Override
-    public String start(String username, String password) {
+    public Retour<String, String> start(String username, String password) {
         this.username = username;
         this.password = password;
 
@@ -38,18 +36,14 @@ public class FmGroupClientImpl implements FmGroupClient {
             if (inputStream != null) {
                 if (!login(session, inputStream)) {
                     // Login gefaald.
-                    return null;
+                    return Retour.createFaultRetour("login gefaald");
                 }
                 String csvDownloadLink = vindCsvDownloadLink(session);
                 if (csvDownloadLink == null) {
-                    return null;
+                    return Retour.createFaultRetour("CSV niet gevonden");
                 }
                 String csv = downloadCsv(csvDownloadLink);
-
-//                String tegoed = haalVerbruikGegevensOp(session);
-//                LOGGER.debug("Tegoed: " + tegoed);
-//                return tegoed;
-                return "okee";
+                return Retour.createSuccessRetour(csv);
             }
         } catch (MalformedURLException e) {
             LOGGER.error("URL invalid: ", e);
@@ -66,7 +60,7 @@ public class FmGroupClientImpl implements FmGroupClient {
                 session.disconnect();
             }
         }
-        return "niet gevonden";
+        return Retour.createFaultRetour("niet gevonden");
     }
 
     private boolean login(HttpsSession session, InputStream inputStream) throws IOException, URISyntaxException {

@@ -1,5 +1,6 @@
 package nl.fm.downline.webclient;
 
+import nl.fm.downline.common.Retour;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,14 +26,16 @@ public class FmGroupClientImplTest {
         String password = authenticationProps.getProperty("password");
 
         FmGroupClientImpl client = new FmGroupClientImpl();
-        String response = client.start(username, password);
+        Retour<String, String> response = client.start(username, password);
         Assert.assertNotNull(response);
+        Assert.assertTrue(response.isSuccess());
     }
 
     @Test
     public void ongeldigeLogin() throws IOException {
-        FmGroupClientImpl haring = new FmGroupClientImpl();
-        String response = haring.start("dummy", "dummy");
-        Assert.assertNull(response);
+        FmGroupClientImpl client = new FmGroupClientImpl();
+        Retour<String, String> response = client.start("dummy", "dummy");
+        Assert.assertNotNull(response);
+        Assert.assertTrue(response.isFault());
     }
 }
