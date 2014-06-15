@@ -165,14 +165,14 @@ public final class Utils {
         return (String[]) list.toArray(new String [list.size()]);
     }
 
-    public static int parseGetal(String getal) throws ParseException {
+    public static float parseGetal(String getal) throws ParseException {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
         dfs.setGroupingSeparator('.');
         dfs.setDecimalSeparator(',');
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(dfs);
         Number number = decimalFormat.parse(getal);
-        return number.intValue();
+        return number.floatValue();
     }
 
 }

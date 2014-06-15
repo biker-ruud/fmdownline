@@ -4,7 +4,7 @@ import nl.fm.downline.common.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -21,9 +21,10 @@ public final class FmGroupMember {
     private float groupPoints;
     private int level;
     private float earnings;
-    private Date entryDate;
+    private Calendar entryDate;
     private int inactiveMonths;
-    private List<FmGroupMember> memberList = new ArrayList<FmGroupMember>();
+    private FmGroupMember upline;
+    private List<FmGroupMember> downline = new ArrayList<FmGroupMember>();
 
     public int getLine() {
         return line;
@@ -89,11 +90,11 @@ public final class FmGroupMember {
         this.earnings = earnings;
     }
 
-    public Date getEntryDate() {
+    public Calendar getEntryDate() {
         return entryDate;
     }
 
-    public void setEntryDate(Date entryDate) {
+    public void setEntryDate(Calendar entryDate) {
         this.entryDate = entryDate;
     }
 
@@ -105,16 +106,24 @@ public final class FmGroupMember {
         this.inactiveMonths = inactiveMonths;
     }
 
-    public List<FmGroupMember> getMemberList() {
-        return memberList;
+    public FmGroupMember getUpline() {
+        return this.upline;
     }
 
-    public void setMemberList(List<FmGroupMember> memberList) {
-        this.memberList = memberList;
+    public void setUpline(FmGroupMember upline) {
+        this.upline = upline;
     }
 
-    public void addMember(FmGroupMember member) {
-        this.memberList.add(member);
+    public List<FmGroupMember> getDownline() {
+        return downline;
+    }
+
+    public void setDownline(List<FmGroupMember> downline) {
+        this.downline = downline;
+    }
+
+    public void addDownlineMember(FmGroupMember member) {
+        this.downline.add(member);
     }
 
     @Override
@@ -128,8 +137,10 @@ public final class FmGroupMember {
         elements.add(String.valueOf(groupPoints));
         elements.add(String.valueOf(level));
         elements.add(String.valueOf(earnings));
-        String formattedEntryDate = new SimpleDateFormat(DATE_FORMAT).format(entryDate);
-        elements.add(formattedEntryDate);
+        if (entryDate != null) {
+            String formattedEntryDate = new SimpleDateFormat(DATE_FORMAT).format(entryDate.getTime());
+            elements.add(formattedEntryDate);
+        }
         elements.add(String.valueOf(inactiveMonths));
         return Utils.join(elements.toArray(new String[elements.size()]), ";");
     }

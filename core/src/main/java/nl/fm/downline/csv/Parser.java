@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * @author Ruud de Jong
@@ -18,6 +19,7 @@ public final class Parser {
     private static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
     private static final String HEADER = "Lijn;Nummer;Sponsor;Distributeur;Adres;Persoonlijke punten;Groepspunten;Level;Verdiensten;entry_date;inactive_months;";
     private static final int HEADER_COUNT = Utils.split(HEADER, ";").length;
+    private static final String NO_EARNINGS = "--";
 
     public Retour<FmGroupMember, String> parse(String csv) {
         if (csv == null || csv.length() < HEADER.length()) {
@@ -25,7 +27,7 @@ public final class Parser {
             return Retour.createFaultRetour("CSV invalid.");
         }
         BufferedReader reader = null;
-        FmGroupMember groupMember = null;
+        FmGroupMember rootMember = null;
         try {
             reader = new BufferedReader(new StringReader(csv));
             // Last update line
@@ -37,12 +39,17 @@ public final class Parser {
                 String memberLine = reader.readLine();
                 while (memberLine != null) {
                     FmGroupMember readMember  = readMember(memberLine);
-                    if (currentMember == null) {
-                        currentMember = readMember;
-                        groupMember = currentMember;
-                    } else {
-
+                    if (readMember == null) {
+                        return Retour.createFaultRetour("Could not read CSV.");
                     }
+                    if (currentMember == null) {
+                        rootMember = readMember;
+                    } else {
+                        FmGroupMember parent = findParent(currentMember, readMember);
+                        parent.addDownlineMember(readMember);
+                        readMember.setUpline(parent);
+                    }
+                    currentMember = readMember;
                     memberLine = reader.readLine();
                 }
             } else {
@@ -61,10 +68,10 @@ public final class Parser {
                 }
             }
         }
-        if (groupMember == null) {
+        if (rootMember == null) {
             return Retour.createFaultRetour("No members found");
         } else {
-            return Retour.createSuccessRetour(groupMember);
+            return Retour.createSuccessRetour(rootMember);
         }
     }
 
@@ -84,6 +91,7 @@ public final class Parser {
         }
         member.setNumber(memberElements[1]);
         member.setName(memberElements[3]);
+        LOGGER.info("Reading: " + member.getName());
         member.setAddress(memberElements[4]);
         try {
             member.setPersonalPoints(Utils.parseGetal(memberElements[5]));
@@ -105,13 +113,17 @@ public final class Parser {
             return null;
         }
         try {
-            member.setEarnings(Utils.parseGetal(memberElements[8]));
+            if (!NO_EARNINGS.equals(memberElements[8])) {
+                member.setEarnings(Utils.parseGetal(memberElements[8]));
+            }
         } catch (ParseException e) {
             LOGGER.warn("'Verdiensten' is not a number: " + memberElements[8]);
             return null;
         }
         try {
-            member.setEntryDate(new SimpleDateFormat(FmGroupMember.DATE_FORMAT).parse(memberElements[9]));
+            Calendar entryDate = Calendar.getInstance();
+            entryDate.setTime(new SimpleDateFormat(FmGroupMember.DATE_FORMAT).parse(memberElements[9]));
+            member.setEntryDate(entryDate);
         } catch (ParseException e) {
             LOGGER.warn("'entry_date' is not a date: " + memberElements[9]);
             return null;
@@ -124,5 +136,22 @@ public final class Parser {
             return null;
         }
         return member;
+    }
+
+    private FmGroupMember findParent(FmGroupMember last, FmGroupMember child) {
+        LOGGER.info("Finding parent of " + child.getName());
+        FmGroupMember current = last;
+        boolean isParent = isParent(current, child);
+        LOGGER.info("Evaluating parent " + current.getName());
+        while (!isParent) {
+            current = current.getUpline();
+            isParent = isParent(current, child);
+        }
+        LOGGER.info("Found parent " + current.getName());
+        return current;
+    }
+
+    private boolean isParent(FmGroupMember current, FmGroupMember child) {
+        return (current.getLine()+1 == child.getLine());
     }
 }
