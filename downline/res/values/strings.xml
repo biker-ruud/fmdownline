@@ -3,5 +3,7 @@
     <!-- Default to english -->
     <!-- Application -->
     <string name="app_name">FM Downline</string>
+    <string name="latestUpdate">Latest update:</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

@@ -3,5 +3,7 @@
     <!-- Nederlandse teksten -->
     <!-- Application -->
     <string name="app_name">FM Downline</string>
+    <string name="latestUpdate">Bijgewerkt op:</string>
+    <string name="refresh">Werk bij</string>
 
 </resources>
