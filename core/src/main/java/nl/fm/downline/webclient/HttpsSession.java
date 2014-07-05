@@ -139,7 +139,13 @@ public final class HttpsSession {
     }
 
     private HttpURLConnection getConnection(String path, Map<String, String> postParamMap) throws IOException {
-        URL url = new URL(UNSECURE_PROTOCOL + host + ":" + port + path);
+        URL url;
+        if (port == -1) {
+            // port not set
+            url = new URL(UNSECURE_PROTOCOL + host + path);
+        } else {
+            url = new URL(UNSECURE_PROTOCOL + host + ":" + port + path);
+        }
         this.requestUrl = url;
         LOGGER.info("Connecting to: " + url);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

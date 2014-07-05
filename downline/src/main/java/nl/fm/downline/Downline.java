@@ -11,6 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import nl.fm.downline.common.Utils;
+import nl.fm.downline.csv.FmGroupMember;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Ruud de Jong
@@ -46,7 +52,9 @@ public class Downline extends Activity {
         Log.i(LOG_TAG, "onResume");
 
         if (properSettings()) {
-
+            updateLatestUpdate();
+            FmGroupMember fmDownlineTree = app.getFmDownline();
+            render(fmDownlineTree);
         } else if (this.firstTime) {
             gotoSettings();
         } else {
@@ -131,6 +139,9 @@ public class Downline extends Activity {
     private void startRefresh() {
         String username = DownlineApp.getUsername();
         String password = DownlineApp.getPassword();
+        DownloadTask asyncTask = new DownloadTask();
+        asyncTask.setDownlineApp(app);
+        asyncTask.execute(username, password);
     }
 
     private boolean properSettings() {
@@ -143,5 +154,40 @@ public class Downline extends Activity {
 
     private void gotoSettings() {
         startActivity(new Intent(this, SettingsActivity.class));
+    }
+
+    private void updateLatestUpdate() {
+        long latestUpdate = DownlineApp.getLatestUpdate();
+        TextView latestUpdateText = (TextView) findViewById(R.id.textLatestUpdate);
+        String latestUpdatePretext = getString(R.string.latestUpdate);
+        if (latestUpdate == 0) {
+            latestUpdateText.setText(latestUpdatePretext + " " + getString(R.string.latestUpdateNever) + ".");
+        } else {
+            Date latestUpdateDate = new Date();
+            latestUpdateDate.setTime(latestUpdate);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            latestUpdateText.setText(latestUpdatePretext + " " + sdf.format(latestUpdateDate));
+        }
+    }
+
+    private void render(FmGroupMember fmGroupMember) {
+        if (fmGroupMember == null) {
+            return;
+        }
+        Log.i(LOG_TAG, "fmGroupMember.getName() " + fmGroupMember.getName());
+        TextView memberName = (TextView) findViewById(R.id.textMemberName);
+        memberName.setText(fmGroupMember.getName());
+
+        Log.i(LOG_TAG, "fmGroupMember.getLevel() " + fmGroupMember.getLevel());
+        TextView memberLevel = (TextView) findViewById(R.id.textMemberLevel);
+        memberLevel.setText(String.valueOf(fmGroupMember.getLevel()));
+
+        Log.i(LOG_TAG, "fmGroupMember.getPersonalPoints() " + Utils.formatGetal(fmGroupMember.getPersonalPoints()));
+        TextView memberPersonalPoints = (TextView) findViewById(R.id.textMemberPersonalPoints);
+        memberPersonalPoints.setText(Utils.formatGetal(fmGroupMember.getPersonalPoints()));
+
+        Log.i(LOG_TAG, "fmGroupMember.getGroupPoints() " + Utils.formatGetal(fmGroupMember.getGroupPoints()));
+        TextView memberGroupPoints = (TextView) findViewById(R.id.textMemberGroupPoints);
+        memberGroupPoints.setText(Utils.formatGetal(fmGroupMember.getGroupPoints()));
     }
 }

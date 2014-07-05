@@ -175,4 +175,12 @@ public final class Utils {
         return number.floatValue();
     }
 
+    public static String formatGetal(float getal) {
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setGroupingSeparator('.');
+        dfs.setDecimalSeparator(',');
+        DecimalFormat decimalFormat = new DecimalFormat("0.##");
+        decimalFormat.setDecimalFormatSymbols(dfs);
+        return decimalFormat.format(getal);
+    }
 }

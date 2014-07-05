@@ -17,4 +17,14 @@ public final class UtilsTest {
         Assert.assertEquals("a--bb--ccc", result);
     }
 
+    @Test
+    public void testFormatGetal() {
+        float getal = 314.23001f;
+
+        String result = Utils.formatGetal(getal);
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals("314,23", result);
+    }
+
 }

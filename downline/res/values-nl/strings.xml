@@ -4,6 +4,7 @@
     <!-- Application -->
     <string name="app_name">FM Downline</string>
     <string name="latestUpdate">Bijgewerkt op:</string>
+    <string name="latestUpdateNever">nooit</string>
     <string name="refresh">Werk bij</string>
 
     <!-- No settings alert dialog -->
@@ -25,4 +26,10 @@
     <!-- About alert dialog -->
     <string name="okButtonText">OK</string>
     <string name="aboutDownline">Over Downline</string>
+
+    <!-- FM Member fields -->
+    <string name="memberName">naam</string>
+    <string name="memberLevel">level</string>
+    <string name="memberPersonalPoints">persoonlijke punten</string>
+    <string name="memberGroupPoints">groepspunten</string>
 </resources>
