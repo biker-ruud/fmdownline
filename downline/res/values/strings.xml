@@ -6,4 +6,23 @@
     <string name="latestUpdate">Latest update:</string>
     <string name="refresh">Refresh</string>
 
+    <!-- No settings alert dialog -->
+    <string name="noSettings">No settings</string>
+    <string name="downlineHasNoSettings">Downline needs settings to work properly.</string>
+    <string name="gotoSettings">Goto settings</string>
+    <string name="exitApp">Stop app</string>
+
+    <!-- Menu screen -->
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+
+    <!-- Preferences -->
+    <string name="distributorID">Distributor ID</string>
+    <string name="distributorID_setting_pretext">Distributor ID is: </string>
+    <string name="password">Password</string>
+    <string name="change_password_sum">Change password</string>
+
+    <!-- About alert dialog -->
+    <string name="okButtonText">OK</string>
+    <string name="aboutDownline">About Downline</string>
 </resources>

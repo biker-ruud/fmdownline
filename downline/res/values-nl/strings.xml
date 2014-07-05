@@ -6,4 +6,23 @@
     <string name="latestUpdate">Bijgewerkt op:</string>
     <string name="refresh">Werk bij</string>
 
+    <!-- No settings alert dialog -->
+    <string name="noSettings">Geen instellingen</string>
+    <string name="downlineHasNoSettings">Downline heeft instellingen nodig om te werken.</string>
+    <string name="gotoSettings">Ga naar instellingen</string>
+    <string name="exitApp">Stop applicatie</string>
+
+    <!-- Menu screen -->
+    <string name="settings">Instellingen</string>
+    <string name="about">Over</string>
+
+    <!-- Preferences -->
+    <string name="distributorID">Distributeur ID</string>
+    <string name="distributorID_setting_pretext">Distributeur ID is: </string>
+    <string name="password">Wachtwoord</string>
+    <string name="change_password_sum">Wijzig wachtwoord</string>
+
+    <!-- About alert dialog -->
+    <string name="okButtonText">OK</string>
+    <string name="aboutDownline">Over Downline</string>
 </resources>
