@@ -10,13 +10,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import nl.fm.downline.common.Utils;
 import nl.fm.downline.csv.FmGroupMember;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Ruud de Jong
@@ -59,7 +65,7 @@ public class Downline extends Activity {
             gotoSettings();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setIcon(R.drawable.icon);
+            builder.setIcon(R.drawable.icon);
             builder.setTitle(getString(R.string.noSettings));
             builder.setMessage(getString(R.string.downlineHasNoSettings))
                     .setCancelable(true)
@@ -107,7 +113,7 @@ public class Downline extends Activity {
                 return true;
             case R.id.menuAbout:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//                builder.setIcon(R.drawable.icon);
+                builder.setIcon(R.drawable.icon);
                 builder.setTitle(getString(R.string.aboutDownline));
                 builder.setMessage("Downline " + versionName)
                         .setCancelable(true)
@@ -189,5 +195,52 @@ public class Downline extends Activity {
         Log.i(LOG_TAG, "fmGroupMember.getGroupPoints() " + Utils.formatGetal(fmGroupMember.getGroupPoints()));
         TextView memberGroupPoints = (TextView) findViewById(R.id.textMemberGroupPoints);
         memberGroupPoints.setText(Utils.formatGetal(fmGroupMember.getGroupPoints()));
+
+        Collections.sort(fmGroupMember.getDownline(), new Comparator<FmGroupMember>() {
+            @Override
+            public int compare(FmGroupMember lhs, FmGroupMember rhs) {
+                int lhsGroupPoints = (int)(lhs.getGroupPoints() * 100f);
+                int rhsGroupPoints = (int)(rhs.getGroupPoints() * 100f);
+                return rhsGroupPoints - lhsGroupPoints;
+            }
+        });
+        renderDownlineMembers(fmGroupMember.getDownline());
+    }
+
+    private void renderDownlineMembers(List<FmGroupMember> memberList) {
+        LinearLayout membersLayout = (LinearLayout) findViewById(R.id.layoutMembers);
+        int memberIconIndex = R.drawable.fmmember;
+        for (FmGroupMember downlineMember : memberList) {
+            View memberView = renderDownlineMember(downlineMember, memberIconIndex);
+            membersLayout.addView(memberView);
+        }
+    }
+
+    private View renderDownlineMember(FmGroupMember downlineMember, int memberIconIndex) {
+        LinearLayout memberDetails = new LinearLayout(this);
+        memberDetails.setOrientation(LinearLayout.VERTICAL);
+        memberDetails.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        ImageView memberIcon = new ImageView(this);
+        memberIcon.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        memberIcon.setImageResource(memberIconIndex);
+        memberDetails.addView(memberIcon);
+
+        TextView memberName = new TextView(this);
+        memberName.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        memberName.setText(downlineMember.getName());
+        memberDetails.addView(memberName);
+
+        TextView memberLevel = new TextView(this);
+        memberLevel.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        memberLevel.setText(String.valueOf(downlineMember.getLevel()));
+        memberDetails.addView(memberLevel);
+
+        TextView memberPoints = new TextView(this);
+        memberPoints.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        memberPoints.setText(Utils.formatGetal(downlineMember.getGroupPoints()));
+        memberDetails.addView(memberPoints);
+
+        return memberDetails;
     }
 }
