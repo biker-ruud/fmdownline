@@ -1,5 +1,6 @@
 package nl.fm.downline;
 
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -25,6 +26,9 @@ public class SettingsActivity extends PreferenceActivity {
         Log.i(LOG_TAG, "onCreate");
         addPreferencesFromResource(R.xml.preferences);
         createPretextMap();
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

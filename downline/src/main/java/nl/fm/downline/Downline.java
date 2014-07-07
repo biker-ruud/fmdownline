@@ -217,6 +217,7 @@ public class Downline extends Activity {
     }
 
     private View renderDownlineMember(FmGroupMember downlineMember, int memberIconIndex) {
+        // default text size = 14
         LinearLayout memberDetails = new LinearLayout(this);
         memberDetails.setOrientation(LinearLayout.VERTICAL);
         memberDetails.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
