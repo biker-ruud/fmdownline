@@ -32,4 +32,7 @@
     <string name="memberLevel">level</string>
     <string name="memberPersonalPoints">personal points</string>
     <string name="memberGroupPoints">group points</string>
+    <string name="memberLevelProgress">level progress</string>
+    <string name="memberEmailAddress">email address</string>
+    <string name="memberPhoneNumber">phone number</string>
 </resources>

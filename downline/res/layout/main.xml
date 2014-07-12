@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" android:id="@+id/mainScrollView">
-
+-->
     <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -20,7 +21,7 @@
                 android:id="@+id/updateButton"/>
         <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
             <ImageView
                     android:layout_width="wrap_content"
@@ -29,7 +30,7 @@
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -51,11 +52,26 @@
                         android:layout_height="wrap_content"
                         android:text="@string/memberGroupPoints"
                         android:id="@+id/labelMemberGroupPoints"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/memberLevelProgress"
+                        android:id="@+id/labelMemberLevelProgress"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/memberEmailAddress"
+                        android:id="@+id/labelMemberEmailAddress"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/memberPhoneNumber"
+                        android:id="@+id/labelMemberPhoneNumber"/>
             </LinearLayout>
             <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -72,15 +88,25 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textMemberGroupPoints"/>
+                <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progressLevel"
+                        android:layout_gravity="center_horizontal"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textMemberEmailAddress"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textMemberPhoneNumber"/>
             </LinearLayout>
         </LinearLayout>
-        <HorizontalScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/layoutMembers">
-            </LinearLayout>
-        </HorizontalScrollView>
+        <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:id="@+id/listMembers" android:layout_weight="1"/>
     </LinearLayout>
-</ScrollView>
+<!--/ScrollView-->

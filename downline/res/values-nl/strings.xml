@@ -32,4 +32,7 @@
     <string name="memberLevel">level</string>
     <string name="memberPersonalPoints">persoonlijke punten</string>
     <string name="memberGroupPoints">groepspunten</string>
+    <string name="memberLevelProgress">level voortgang</string>
+    <string name="memberEmailAddress">emailadres</string>
+    <string name="memberPhoneNumber">telefoon</string>
 </resources>

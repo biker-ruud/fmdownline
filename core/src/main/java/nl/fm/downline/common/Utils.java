@@ -144,7 +144,7 @@ public final class Utils {
         }
         int closeLen = close.length();
         int openLen = open.length();
-        List list = new ArrayList();
+        List<String> list = new ArrayList<>();
         int pos = 0;
         while (pos < (strLen - closeLen)) {
             int start = str.indexOf(open, pos);
@@ -162,7 +162,7 @@ public final class Utils {
         if (list.isEmpty()) {
             return null;
         }
-        return (String[]) list.toArray(new String [list.size()]);
+        return list.toArray(new String [list.size()]);
     }
 
     public static float parseGetal(String getal) throws ParseException {
@@ -182,5 +182,40 @@ public final class Utils {
         DecimalFormat decimalFormat = new DecimalFormat("0.##");
         decimalFormat.setDecimalFormatSymbols(dfs);
         return decimalFormat.format(getal);
+    }
+
+    public static String getEmailAddress(String address) {
+        if (address == null) {
+            return null;
+        }
+        String[] splitAddress = split(address, " ");
+        if (splitAddress == null || splitAddress.length == 0) {
+            return null;
+        }
+        return splitAddress[splitAddress.length-1];
+    }
+
+    public static String getPhoneNumber(String address) {
+        if (address == null) {
+            return null;
+        }
+        String[] splitAddress = split(address, " ");
+        if (splitAddress == null || splitAddress.length == 0) {
+            return null;
+        }
+        for (String possiblePhoneNumber : splitAddress) {
+            if (possiblePhoneNumber.length() > 8 && isNumeric(possiblePhoneNumber)) {
+                return possiblePhoneNumber;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isNumeric(String str)
+    {
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) return false;
+        }
+        return true;
     }
 }
