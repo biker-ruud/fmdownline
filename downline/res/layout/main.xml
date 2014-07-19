@@ -14,11 +14,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/latestUpdate"
                 android:id="@+id/textLatestUpdate"/>
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/refresh"
-                android:id="@+id/updateButton"/>
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
@@ -45,13 +40,8 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/memberPersonalPoints"
-                        android:id="@+id/labelMemberPersonalPoints"/>
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/memberGroupPoints"
-                        android:id="@+id/labelMemberGroupPoints"/>
+                        android:text="@string/memberPoints"
+                        android:id="@+id/labelMemberPoints"/>
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -83,11 +73,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textMemberPersonalPoints"/>
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textMemberGroupPoints"/>
+                        android:id="@+id/textMemberPoints"/>
                 <ProgressBar
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="fill_parent"

@@ -5,7 +5,6 @@
     <string name="app_name">FM Downline</string>
     <string name="latestUpdate">Bijgewerkt op:</string>
     <string name="latestUpdateNever">nooit</string>
-    <string name="refresh">Werk bij</string>
 
     <!-- No settings alert dialog -->
     <string name="noSettings">Geen instellingen</string>
@@ -14,6 +13,7 @@
     <string name="exitApp">Stop applicatie</string>
 
     <!-- Menu screen -->
+    <string name="refresh">Werk bij</string>
     <string name="settings">Instellingen</string>
     <string name="about">Over</string>
 
@@ -32,6 +32,7 @@
     <string name="memberLevel">level</string>
     <string name="memberPersonalPoints">persoonlijke punten</string>
     <string name="memberGroupPoints">groepspunten</string>
+    <string name="memberPoints">punten</string>
     <string name="memberLevelProgress">level voortgang</string>
     <string name="memberEmailAddress">emailadres</string>
     <string name="memberPhoneNumber">telefoon</string>

@@ -5,7 +5,6 @@
     <string name="app_name">FM Downline</string>
     <string name="latestUpdate">Latest update:</string>
     <string name="latestUpdateNever">never</string>
-    <string name="refresh">Refresh</string>
 
     <!-- No settings alert dialog -->
     <string name="noSettings">No settings</string>
@@ -14,6 +13,7 @@
     <string name="exitApp">Stop app</string>
 
     <!-- Menu screen -->
+    <string name="refresh">Refresh</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
 
@@ -32,6 +32,7 @@
     <string name="memberLevel">level</string>
     <string name="memberPersonalPoints">personal points</string>
     <string name="memberGroupPoints">group points</string>
+    <string name="memberPoints">points</string>
     <string name="memberLevelProgress">level progress</string>
     <string name="memberEmailAddress">email address</string>
     <string name="memberPhoneNumber">phone number</string>

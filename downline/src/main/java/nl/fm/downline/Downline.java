@@ -10,13 +10,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,7 +23,6 @@ import nl.fm.downline.common.Utils;
 import nl.fm.downline.csv.FmGroupMember;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -34,7 +31,7 @@ import java.util.List;
 /**
  * @author Ruud de Jong
  */
-public class Downline extends Activity {
+public class Downline extends Activity implements RefreshListener {
 
     private static final String LOG_TAG = "Downline";
 
@@ -66,9 +63,7 @@ public class Downline extends Activity {
         Log.i(LOG_TAG, "onResume");
 
         if (properSettings()) {
-            updateLatestUpdate();
-            FmGroupMember fmDownlineTree = app.getFmDownline();
-            render(fmDownlineTree);
+            refresh();
         } else if (this.firstTime) {
             gotoSettings();
         } else {
@@ -101,9 +96,9 @@ public class Downline extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.i(LOG_TAG, "onCreateOptionsMenu");
-        menu.add(Menu.NONE, R.id.menuSettings, 0, getString(R.string.settings));
-        menu.add(Menu.NONE, R.id.menuAbout, 0, getString(R.string.about));
-        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
     }
 
     @Override
@@ -116,6 +111,9 @@ public class Downline extends Activity {
             versionName = "";
         }
         switch (item.getItemId()) {
+            case R.id.menuRefresh:
+                startRefresh();
+                return true;
             case R.id.menuSettings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
@@ -140,16 +138,8 @@ public class Downline extends Activity {
     }
 
     private void initControls() {
-        Button refreshButton = (Button) findViewById(R.id.updateButton);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startRefresh();
-            }
-        });
-
         ListView membersList = (ListView) findViewById(R.id.listMembers);
-        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.groupmember);
+        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
         membersList.setAdapter(fmGroupMemberAdapter);
     }
 
@@ -158,6 +148,7 @@ public class Downline extends Activity {
         String password = DownlineApp.getPassword();
         DownloadTask asyncTask = new DownloadTask();
         asyncTask.setDownlineApp(app);
+        asyncTask.setRefreshListener(this);
         asyncTask.execute(username, password);
     }
 
@@ -199,13 +190,14 @@ public class Downline extends Activity {
         TextView memberLevel = (TextView) findViewById(R.id.textMemberLevel);
         memberLevel.setText(String.valueOf(fmGroupMember.getLevel()));
 
-        Log.i(LOG_TAG, "fmGroupMember.getPersonalPoints() " + Utils.formatGetal(fmGroupMember.getPersonalPoints()));
-        TextView memberPersonalPoints = (TextView) findViewById(R.id.textMemberPersonalPoints);
-        memberPersonalPoints.setText(Utils.formatGetal(fmGroupMember.getPersonalPoints()));
-
-        Log.i(LOG_TAG, "fmGroupMember.getGroupPoints() " + Utils.formatGetal(fmGroupMember.getGroupPoints()));
-        TextView memberGroupPoints = (TextView) findViewById(R.id.textMemberGroupPoints);
-        memberGroupPoints.setText(Utils.formatGetal(fmGroupMember.getGroupPoints()));
+        String personalPoints = Utils.formatGetal(fmGroupMember.getPersonalPoints());
+        String groupPoints = Utils.formatGetal(fmGroupMember.getGroupPoints());
+        String combinedPoints = personalPoints + " / " + groupPoints;
+        Log.i(LOG_TAG, "fmGroupMember.getPersonalPoints() " + personalPoints);
+        Log.i(LOG_TAG, "fmGroupMember.getGroupPoints() " + groupPoints);
+        Log.i(LOG_TAG, "fmGroupMember combined points() " + combinedPoints);
+        TextView memberPoints = (TextView) findViewById(R.id.textMemberPoints);
+        memberPoints.setText(combinedPoints);
 
         ProgressBar levelProgress = (ProgressBar) findViewById(R.id.progressLevel);
         setLevelProgress(levelProgress, fmGroupMember);
@@ -243,6 +235,13 @@ public class Downline extends Activity {
         }
     }
 
+    @Override
+    public void refresh() {
+        updateLatestUpdate();
+        FmGroupMember fmDownlineTree = app.getFmDownline();
+        render(fmDownlineTree);
+    }
+
     private class FmGroupMemberAdapter<T extends FmGroupMember> extends ArrayAdapter<T> {
 
         public FmGroupMemberAdapter(Context context, int resourceId) {
@@ -263,25 +262,22 @@ public class Downline extends Activity {
             } else {
                 Log.i(LOG_TAG, "FmGroupMemberAdapter.getView(): inflating new view");
                 LayoutInflater inflater = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                memberView = inflater.inflate(R.layout.groupmember, parent, false);
+                memberView = inflater.inflate(R.layout.listmember, parent, false);
                 holder = new FmGroupMemberViewHolder();
                 holder.memberNameView = (TextView) memberView.findViewById(R.id.textMemberName);
                 holder.memberLevelView = (TextView) memberView.findViewById(R.id.textMemberLevel);
-                holder.memberPersonalPointsView = (TextView) memberView.findViewById(R.id.textMemberPersonalPoints);
-                holder.memberGroupPointsiew = (TextView) memberView.findViewById(R.id.textMemberGroupPoints);
+                holder.memberPointsiew = (TextView) memberView.findViewById(R.id.textMemberPoints);
                 holder.memberLevelProgress = (ProgressBar) memberView.findViewById(R.id.progressLevel);
-                holder.memberEmailAddressView = (TextView) memberView.findViewById(R.id.textMemberEmailAddress);
-                holder.memberPhoneNumberView = (TextView) memberView.findViewById(R.id.textMemberPhoneNumber);
             }
             FmGroupMember downlineMember = super.getItem(position);
             Log.i(LOG_TAG, "FmGroupMemberAdapter.getView(): member " + downlineMember.getName());
             holder.memberNameView.setText(downlineMember.getName());
             holder.memberLevelView.setText(String.valueOf(downlineMember.getLevel()));
-            holder.memberPersonalPointsView.setText(Utils.formatGetal(downlineMember.getPersonalPoints()));
-            holder.memberGroupPointsiew.setText(Utils.formatGetal(downlineMember.getGroupPoints()));
+            String personalPoints = Utils.formatGetal(downlineMember.getPersonalPoints());
+            String groupPoints = Utils.formatGetal(downlineMember.getGroupPoints());
+            String combinedPoints = personalPoints + " / " + groupPoints;
+            holder.memberPointsiew.setText(combinedPoints);
             setLevelProgress(holder.memberLevelProgress, downlineMember);
-            holder.memberEmailAddressView.setText(Utils.getEmailAddress(downlineMember.getAddress()));
-            holder.memberPhoneNumberView.setText(Utils.getPhoneNumber(downlineMember.getAddress()));
             memberView.setTag(holder);
             return memberView;
         }
@@ -290,10 +286,7 @@ public class Downline extends Activity {
     private class FmGroupMemberViewHolder {
         TextView memberNameView;
         TextView memberLevelView;
-        TextView memberPersonalPointsView;
-        TextView memberGroupPointsiew;
+        TextView memberPointsiew;
         ProgressBar memberLevelProgress;
-        TextView memberEmailAddressView;
-        TextView memberPhoneNumberView;
     }
 }

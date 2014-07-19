@@ -28,28 +28,13 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/memberPersonalPoints"
-                android:id="@+id/labelMemberPersonalPoints"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/memberGroupPoints"
-                android:id="@+id/labelMemberGroupPoints"/>
+                android:text="@string/memberPoints"
+                android:id="@+id/labelMemberPoints"/>
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/memberLevelProgress"
                 android:id="@+id/labelMemberLevelProgress"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/memberEmailAddress"
-                android:id="@+id/labelMemberEmailAddress"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/memberPhoneNumber"
-                android:id="@+id/labelMemberPhoneNumber"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="vertical"
@@ -66,24 +51,12 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textMemberPersonalPoints"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMemberGroupPoints"/>
+                android:id="@+id/textMemberPoints"/>
         <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/progressLevel"
                 android:layout_gravity="center_horizontal"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMemberEmailAddress"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMemberPhoneNumber"/>
     </LinearLayout>
 </LinearLayout>
