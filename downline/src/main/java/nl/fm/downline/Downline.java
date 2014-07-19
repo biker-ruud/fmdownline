@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -141,6 +142,20 @@ public class Downline extends Activity implements RefreshListener {
         ListView membersList = (ListView) findViewById(R.id.listMembers);
         fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
         membersList.setAdapter(fmGroupMemberAdapter);
+
+        membersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object chosenItem = parent.getItemAtPosition(position);
+                if (chosenItem instanceof FmGroupMember) {
+                    FmGroupMember chosenMember = (FmGroupMember) chosenItem;
+                    Log.i(LOG_TAG, "Chosen member " + chosenMember.getName());
+                    Intent intent = new Intent(view.getContext(), Member.class);
+                    intent.putExtra(DownlineApp.INTENT_NAME_MEMBER_NUMBER, chosenMember.getNumber());
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     private void startRefresh() {
@@ -200,7 +215,7 @@ public class Downline extends Activity implements RefreshListener {
         memberPoints.setText(combinedPoints);
 
         ProgressBar levelProgress = (ProgressBar) findViewById(R.id.progressLevel);
-        setLevelProgress(levelProgress, fmGroupMember);
+        app.setLevelProgress(levelProgress, fmGroupMember);
 
         Log.i(LOG_TAG, "fmGroupMember.getEmailAdress() " + Utils.getEmailAddress(fmGroupMember.getAddress()));
         TextView memberEmailAddress = (TextView) findViewById(R.id.textMemberEmailAddress);
@@ -227,13 +242,6 @@ public class Downline extends Activity implements RefreshListener {
         fmGroupMemberAdapter.addAll(memberList);
     }
 
-    private void setLevelProgress(ProgressBar progressBar, FmGroupMember fmGroupMember) {
-        LevelRanges.Range levelRange = LevelRanges.getRange(fmGroupMember.getLevel());
-        if (levelRange != null) {
-            progressBar.setMax((int) (levelRange.getMax() - levelRange.getMin()));
-            progressBar.setProgress((int) (fmGroupMember.getGroupPoints() - levelRange.getMin()));
-        }
-    }
 
     @Override
     public void refresh() {
@@ -242,51 +250,4 @@ public class Downline extends Activity implements RefreshListener {
         render(fmDownlineTree);
     }
 
-    private class FmGroupMemberAdapter<T extends FmGroupMember> extends ArrayAdapter<T> {
-
-        public FmGroupMemberAdapter(Context context, int resourceId) {
-            super(context, resourceId);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Log.i(LOG_TAG, "FmGroupMemberAdapter.getView() " + position);
-            FmGroupMemberViewHolder holder;
-            View memberView;
-
-            // Try and reuse old view first.
-            if (convertView != null  && convertView.getTag() != null && convertView.getTag() instanceof FmGroupMemberViewHolder) {
-                Log.i(LOG_TAG, "FmGroupMemberAdapter.getView(): re-using old view");
-                holder = (FmGroupMemberViewHolder) convertView.getTag();
-                memberView = convertView;
-            } else {
-                Log.i(LOG_TAG, "FmGroupMemberAdapter.getView(): inflating new view");
-                LayoutInflater inflater = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                memberView = inflater.inflate(R.layout.listmember, parent, false);
-                holder = new FmGroupMemberViewHolder();
-                holder.memberNameView = (TextView) memberView.findViewById(R.id.textMemberName);
-                holder.memberLevelView = (TextView) memberView.findViewById(R.id.textMemberLevel);
-                holder.memberPointsiew = (TextView) memberView.findViewById(R.id.textMemberPoints);
-                holder.memberLevelProgress = (ProgressBar) memberView.findViewById(R.id.progressLevel);
-            }
-            FmGroupMember downlineMember = super.getItem(position);
-            Log.i(LOG_TAG, "FmGroupMemberAdapter.getView(): member " + downlineMember.getName());
-            holder.memberNameView.setText(downlineMember.getName());
-            holder.memberLevelView.setText(String.valueOf(downlineMember.getLevel()));
-            String personalPoints = Utils.formatGetal(downlineMember.getPersonalPoints());
-            String groupPoints = Utils.formatGetal(downlineMember.getGroupPoints());
-            String combinedPoints = personalPoints + " / " + groupPoints;
-            holder.memberPointsiew.setText(combinedPoints);
-            setLevelProgress(holder.memberLevelProgress, downlineMember);
-            memberView.setTag(holder);
-            return memberView;
-        }
-    }
-
-    private class FmGroupMemberViewHolder {
-        TextView memberNameView;
-        TextView memberLevelView;
-        TextView memberPointsiew;
-        ProgressBar memberLevelProgress;
-    }
 }

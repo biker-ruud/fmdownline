@@ -10,6 +10,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".Member"/>
+
         <!-- API level 16 uses 'parentActivityName' -->
         <!-- API level below 16 uses 'meta-data' -->
         <activity android:name=".SettingsActivity" android:parentActivityName=".Downline">

@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.ProgressBar;
+import nl.fm.downline.common.LevelRanges;
 import nl.fm.downline.common.Retour;
 import nl.fm.downline.csv.FmGroupMember;
 import nl.fm.downline.csv.Parser;
@@ -22,6 +24,7 @@ public class DownlineApp extends Application {
     public static final String PREF_KEY_USERNAME = "pref_username";
     public static final String PREF_KEY_PASSWORD = "pref_password";
     public static final String PREF_KEY_LASTEST_UPDATE = "pref_latest_update";
+    public static final String INTENT_NAME_MEMBER_NUMBER = "memberNumber";
 
     private static final String LOG_TAG = "DownlineApp";
     private static final String SHARED_PREFERENCE_NAME = "nl.fm.downline_preferences";
@@ -30,6 +33,8 @@ public class DownlineApp extends Application {
 
     private static SharedPreferences sharedPreferences;
     private static DownlineApp INSTANCE;
+
+    private FmGroupMember cachedParsedDownline;
 
     @Override
     public void onCreate() {
@@ -60,6 +65,13 @@ public class DownlineApp extends Application {
     }
 
     public FmGroupMember getFmDownline() {
+        if (cachedParsedDownline == null) {
+            cachedParsedDownline = parseFmDownline();
+        }
+        return cachedParsedDownline;
+    }
+
+    private FmGroupMember parseFmDownline() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int n=0;
@@ -95,10 +107,20 @@ public class DownlineApp extends Application {
             prefEditor.commit();
 
             Log.i(LOG_TAG, "saveDownlineTree(): Succesfully saved a new tree.");
+            cachedParsedDownline = null;
         } catch (IOException e) {
             Log.e(LOG_TAG, "saveDownlineTree(): Could not save file", e);
         }
     }
+
+    public void setLevelProgress(ProgressBar progressBar, FmGroupMember fmGroupMember) {
+        LevelRanges.Range levelRange = LevelRanges.getRange(fmGroupMember.getLevel());
+        if (levelRange != null) {
+            progressBar.setMax((int) (levelRange.getMax() - levelRange.getMin()));
+            progressBar.setProgress((int) (fmGroupMember.getGroupPoints() - levelRange.getMin()));
+        }
+    }
+
 
 
 }

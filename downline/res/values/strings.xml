@@ -29,6 +29,7 @@
 
     <!-- FM Member fields -->
     <string name="memberName">name</string>
+    <string name="memberLine">line</string>
     <string name="memberLevel">level</string>
     <string name="memberPersonalPoints">personal points</string>
     <string name="memberGroupPoints">group points</string>
