@@ -14,8 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,6 +42,7 @@ public class Downline extends Activity implements RefreshListener {
     private boolean firstTime = true;
     private DownlineApp app;
     private FmGroupMemberAdapter<FmGroupMember> fmGroupMemberAdapter;
+    private MenuItem refreshItem;
 
     /**
      * Called when the activity is first created.
@@ -113,6 +117,7 @@ public class Downline extends Activity implements RefreshListener {
         }
         switch (item.getItemId()) {
             case R.id.menuRefresh:
+                refreshItem = item;
                 startRefresh();
                 return true;
             case R.id.menuSettings:
@@ -159,6 +164,14 @@ public class Downline extends Activity implements RefreshListener {
     }
 
     private void startRefresh() {
+        /* Attach a rotating ImageView to the refresh item as an ActionView */
+        ImageView imageView = new ImageView(this);
+        imageView.setImageResource(R.drawable.ic_refresh);
+        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.clockwise_refresh);
+        rotation.setRepeatCount(Animation.INFINITE);
+        imageView.startAnimation(rotation);
+        refreshItem.setActionView(imageView);
+
         String username = DownlineApp.getUsername();
         String password = DownlineApp.getPassword();
         DownloadTask asyncTask = new DownloadTask();
@@ -245,6 +258,11 @@ public class Downline extends Activity implements RefreshListener {
 
     @Override
     public void refresh() {
+        if (refreshItem != null && refreshItem.getActionView() != null) {
+            refreshItem.getActionView().clearAnimation();
+            refreshItem.setActionView(null);
+        }
+
         updateLatestUpdate();
         FmGroupMember fmDownlineTree = app.getFmDownline();
         render(fmDownlineTree);
