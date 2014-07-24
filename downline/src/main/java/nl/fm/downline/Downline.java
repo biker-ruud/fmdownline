@@ -103,6 +103,13 @@ public class Downline extends Activity implements RefreshListener {
         Log.i(LOG_TAG, "onCreateOptionsMenu");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        refreshItem = menu.findItem(R.id.menuRefresh);
+        refreshItem.getActionView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRefresh();
+            }
+        });
         return true;
     }
 
@@ -117,8 +124,7 @@ public class Downline extends Activity implements RefreshListener {
         }
         switch (item.getItemId()) {
             case R.id.menuRefresh:
-                refreshItem = item;
-                startRefresh();
+                // Menu refresh has it's own onclick handler
                 return true;
             case R.id.menuSettings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -165,12 +171,9 @@ public class Downline extends Activity implements RefreshListener {
 
     private void startRefresh() {
         /* Attach a rotating ImageView to the refresh item as an ActionView */
-        ImageView imageView = new ImageView(this);
-        imageView.setImageResource(R.drawable.ic_refresh);
         Animation rotation = AnimationUtils.loadAnimation(this, R.anim.clockwise_refresh);
         rotation.setRepeatCount(Animation.INFINITE);
-        imageView.startAnimation(rotation);
-        refreshItem.setActionView(imageView);
+        refreshItem.getActionView().startAnimation(rotation);
 
         String username = DownlineApp.getUsername();
         String password = DownlineApp.getPassword();
@@ -230,13 +233,9 @@ public class Downline extends Activity implements RefreshListener {
         ProgressBar levelProgress = (ProgressBar) findViewById(R.id.progressLevel);
         app.setLevelProgress(levelProgress, fmGroupMember);
 
-        Log.i(LOG_TAG, "fmGroupMember.getEmailAdress() " + Utils.getEmailAddress(fmGroupMember.getAddress()));
-        TextView memberEmailAddress = (TextView) findViewById(R.id.textMemberEmailAddress);
-        memberEmailAddress.setText(Utils.getEmailAddress(fmGroupMember.getAddress()));
-
-        Log.i(LOG_TAG, "fmGroupMember.getPhoneNumber() " + Utils.getPhoneNumber(fmGroupMember.getAddress()));
-        TextView memberPhoneNumber = (TextView) findViewById(R.id.textMemberPhoneNumber);
-        memberPhoneNumber.setText(Utils.getPhoneNumber(fmGroupMember.getAddress()));
+        Log.i(LOG_TAG, "fmGroupMember.getEarnings() " + Utils.formatGetal(fmGroupMember.getEarnings()));
+        TextView memberEarnings = (TextView) findViewById(R.id.textMemberEarnings);
+        memberEarnings.setText("€ " + Utils.formatGetal(fmGroupMember.getEarnings()));
 
         Collections.sort(fmGroupMember.getDownline(), new Comparator<FmGroupMember>() {
             @Override
@@ -260,7 +259,6 @@ public class Downline extends Activity implements RefreshListener {
     public void refresh() {
         if (refreshItem != null && refreshItem.getActionView() != null) {
             refreshItem.getActionView().clearAnimation();
-            refreshItem.setActionView(null);
         }
 
         updateLatestUpdate();

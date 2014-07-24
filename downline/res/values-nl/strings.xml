@@ -37,4 +37,5 @@
     <string name="memberLevelProgress">level voortgang</string>
     <string name="memberEmailAddress">emailadres</string>
     <string name="memberPhoneNumber">telefoon</string>
+    <string name="memberEarnings">verdiensten</string>
 </resources>

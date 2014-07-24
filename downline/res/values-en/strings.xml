@@ -37,4 +37,5 @@
     <string name="memberLevelProgress">level progress</string>
     <string name="memberEmailAddress">email address</string>
     <string name="memberPhoneNumber">phone number</string>
+    <string name="memberEarnings">earnings</string>
 </resources>

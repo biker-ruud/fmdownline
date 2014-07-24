@@ -45,13 +45,8 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/memberEmailAddress"
-                    android:id="@+id/labelMemberEmailAddress"/>
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/memberPhoneNumber"
-                    android:id="@+id/labelMemberPhoneNumber"/>
+                    android:text="@string/memberEarnings"
+                    android:id="@+id/labelMemberEarnings"/>
         </LinearLayout>
         <LinearLayout
                 android:orientation="vertical"
@@ -78,13 +73,13 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textMemberEmailAddress"/>
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textMemberPhoneNumber"/>
+                    android:id="@+id/textMemberEarnings"/>
         </LinearLayout>
     </LinearLayout>
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
+            android:background="#ffff0000"/>
     <ListView
             android:layout_width="fill_parent"
             android:layout_height="0dp"

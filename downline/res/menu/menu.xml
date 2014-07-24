@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--android:icon="@drawable/ic_refresh"-->
     <item
             android:id="@+id/menuRefresh"
             android:title="@string/refresh"
-            android:icon="@drawable/ic_refresh"
             android:showAsAction="always"
+            android:actionLayout="@layout/refresh_action_view"
             />
     <item
             android:id="@+id/menuSettings"
