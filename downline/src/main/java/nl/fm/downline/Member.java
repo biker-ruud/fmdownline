@@ -54,7 +54,8 @@ public class Member extends Activity {
 
     private void initControls() {
         ListView membersList = (ListView) findViewById(R.id.listMembers);
-        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
+//        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
+        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.list_item_card);
         membersList.setAdapter(fmGroupMemberAdapter);
 
     }

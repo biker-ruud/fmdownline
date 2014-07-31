@@ -151,7 +151,10 @@ public class Downline extends Activity implements RefreshListener {
 
     private void initControls() {
         ListView membersList = (ListView) findViewById(R.id.listMembers);
-        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
+        membersList.addHeaderView(new View(this));
+        membersList.addFooterView(new View(this));
+//        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
+        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.list_item_card);
         membersList.setAdapter(fmGroupMemberAdapter);
 
         membersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
