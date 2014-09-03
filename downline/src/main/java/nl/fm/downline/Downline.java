@@ -1,30 +1,26 @@
 package nl.fm.downline;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import nl.fm.downline.common.LevelRanges;
 import nl.fm.downline.common.Utils;
 import nl.fm.downline.csv.FmGroupMember;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectResource;
+import roboguice.inject.InjectView;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -35,7 +31,8 @@ import java.util.List;
 /**
  * @author Ruud de Jong
  */
-public class Downline extends Activity implements RefreshListener {
+@ContentView(R.layout.main)
+public class Downline extends RoboActivity implements RefreshListener {
 
     private static final String LOG_TAG = "Downline";
 
@@ -43,6 +40,25 @@ public class Downline extends Activity implements RefreshListener {
     private DownlineApp app;
     private FmGroupMemberAdapter<FmGroupMember> fmGroupMemberAdapter;
     private MenuItem refreshItem;
+
+    // RoboGuice Injections
+    @InjectView(R.id.listMembers)
+    private ListView membersList;
+    @InjectView(R.id.textMemberName)
+    private TextView memberName;
+    @InjectView(R.id.textMemberLevel)
+    private TextView memberLevel;
+    @InjectView(R.id.textMemberPoints)
+    private TextView memberPoints;
+    @InjectView(R.id.progressLevel)
+    private ProgressBar levelProgress;
+    @InjectView(R.id.textMemberEarnings)
+    private TextView memberEarnings;
+    @InjectView(R.id.textLatestUpdate)
+    private TextView latestUpdateText;
+
+    @InjectResource(R.anim.clockwise_refresh)
+    Animation rotation;
 
     /**
      * Called when the activity is first created.
@@ -58,7 +74,6 @@ public class Downline extends Activity implements RefreshListener {
         Log.i(LOG_TAG, "onCreate");
         this.app = DownlineApp.getInstance();
 
-        setContentView(R.layout.main);
         initControls();
     }
 
@@ -150,10 +165,8 @@ public class Downline extends Activity implements RefreshListener {
     }
 
     private void initControls() {
-        ListView membersList = (ListView) findViewById(R.id.listMembers);
         membersList.addHeaderView(new View(this));
         membersList.addFooterView(new View(this));
-//        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
         fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.list_item_card);
         membersList.setAdapter(fmGroupMemberAdapter);
 
@@ -174,7 +187,6 @@ public class Downline extends Activity implements RefreshListener {
 
     private void startRefresh() {
         /* Attach a rotating ImageView to the refresh item as an ActionView */
-        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.clockwise_refresh);
         rotation.setRepeatCount(Animation.INFINITE);
         refreshItem.getActionView().startAnimation(rotation);
 
@@ -200,7 +212,6 @@ public class Downline extends Activity implements RefreshListener {
 
     private void updateLatestUpdate() {
         long latestUpdate = DownlineApp.getLatestUpdate();
-        TextView latestUpdateText = (TextView) findViewById(R.id.textLatestUpdate);
         String latestUpdatePretext = getString(R.string.latestUpdate);
         if (latestUpdate == 0) {
             latestUpdateText.setText(latestUpdatePretext + " " + getString(R.string.latestUpdateNever) + ".");
@@ -217,11 +228,9 @@ public class Downline extends Activity implements RefreshListener {
             return;
         }
         Log.i(LOG_TAG, "fmGroupMember.getName() " + fmGroupMember.getName());
-        TextView memberName = (TextView) findViewById(R.id.textMemberName);
         memberName.setText(fmGroupMember.getName());
 
         Log.i(LOG_TAG, "fmGroupMember.getLevel() " + fmGroupMember.getLevel());
-        TextView memberLevel = (TextView) findViewById(R.id.textMemberLevel);
         memberLevel.setText(String.valueOf(fmGroupMember.getLevel()));
 
         String personalPoints = Utils.formatGetal(fmGroupMember.getPersonalPoints());
@@ -230,14 +239,11 @@ public class Downline extends Activity implements RefreshListener {
         Log.i(LOG_TAG, "fmGroupMember.getPersonalPoints() " + personalPoints);
         Log.i(LOG_TAG, "fmGroupMember.getGroupPoints() " + groupPoints);
         Log.i(LOG_TAG, "fmGroupMember combined points() " + combinedPoints);
-        TextView memberPoints = (TextView) findViewById(R.id.textMemberPoints);
         memberPoints.setText(combinedPoints);
 
-        ProgressBar levelProgress = (ProgressBar) findViewById(R.id.progressLevel);
         app.setLevelProgress(levelProgress, fmGroupMember);
 
         Log.i(LOG_TAG, "fmGroupMember.getEarnings() " + Utils.formatGetal(fmGroupMember.getEarnings()));
-        TextView memberEarnings = (TextView) findViewById(R.id.textMemberEarnings);
         memberEarnings.setText("€ " + Utils.formatGetal(fmGroupMember.getEarnings()));
 
         Collections.sort(fmGroupMember.getDownline(), new Comparator<FmGroupMember>() {

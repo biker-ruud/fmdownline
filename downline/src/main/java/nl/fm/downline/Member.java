@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -54,7 +55,8 @@ public class Member extends Activity {
 
     private void initControls() {
         ListView membersList = (ListView) findViewById(R.id.listMembers);
-//        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.listmember);
+        membersList.addHeaderView(new View(this));
+        membersList.addFooterView(new View(this));
         fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.list_item_card);
         membersList.setAdapter(fmGroupMemberAdapter);
 

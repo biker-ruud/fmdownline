@@ -61,6 +61,11 @@
                 <artifactId>log4j</artifactId>
                 <version>1.2.17</version>
             </dependency>
+            <dependency>
+                <groupId>org.roboguice</groupId>
+                <artifactId>roboguice</artifactId>
+                <version>2.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>junit</groupId>

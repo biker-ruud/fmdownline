@@ -26,6 +26,10 @@
             <artifactId>android</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.roboguice</groupId>
+            <artifactId>roboguice</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-android</artifactId>
         </dependency>
