@@ -16,14 +16,8 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
     private DownlineApp app;
 
-    private RefreshListener refreshListener;
-
     public void setDownlineApp(DownlineApp app) {
         this.app = app;
-    }
-
-    public void setRefreshListener(RefreshListener listener) {
-        this.refreshListener = listener;
     }
 
     @Override
@@ -46,7 +40,6 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
         Retour<FmGroupMember, String> downlineTreeParseRetour = fmParser.parse(result);
         if (downlineTreeParseRetour.isSuccess()) {
             app.saveDownlineTree(result);
-            refreshListener.refresh();
         }
     }
 }

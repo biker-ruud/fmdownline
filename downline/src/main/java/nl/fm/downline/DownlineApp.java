@@ -14,7 +14,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 /**
  * @author Ruud de Jong
@@ -35,6 +37,7 @@ public class DownlineApp extends Application {
     private static DownlineApp INSTANCE;
 
     private FmGroupMember cachedParsedDownline;
+    private Collection<RefreshListener> refreshListenerCollection = new HashSet<RefreshListener>();
 
     @Override
     public void onCreate() {
@@ -108,6 +111,7 @@ public class DownlineApp extends Application {
 
             Log.i(LOG_TAG, "saveDownlineTree(): Succesfully saved a new tree.");
             cachedParsedDownline = null;
+            notifyRefreshListeners();
         } catch (IOException e) {
             Log.e(LOG_TAG, "saveDownlineTree(): Could not save file", e);
         }
@@ -118,6 +122,16 @@ public class DownlineApp extends Application {
         if (levelRange != null) {
             progressBar.setMax((int) (levelRange.getMax() - levelRange.getMin()));
             progressBar.setProgress((int) (fmGroupMember.getGroupPoints() - levelRange.getMin()));
+        }
+    }
+
+    public void registerListener(RefreshListener resfreshListener) {
+        refreshListenerCollection.add(resfreshListener);
+    }
+
+    private void notifyRefreshListeners() {
+        for (RefreshListener refreshListener : refreshListenerCollection) {
+            refreshListener.refresh();
         }
     }
 

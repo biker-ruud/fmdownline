@@ -1,64 +1,22 @@
 package nl.fm.downline;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.Animation;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import nl.fm.downline.common.Utils;
 import nl.fm.downline.csv.FmGroupMember;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
-import roboguice.inject.InjectResource;
-import roboguice.inject.InjectView;
-
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Ruud de Jong
  */
 @ContentView(R.layout.main)
-public class Downline extends RoboActivity implements RefreshListener {
+public class Downline extends RoboActivity implements MemberSelectionListener {
 
     private static final String LOG_TAG = "Downline";
 
-    private boolean firstTime = true;
-    private DownlineApp app;
-    private FmGroupMemberAdapter<FmGroupMember> fmGroupMemberAdapter;
-    private MenuItem refreshItem;
-
-    // RoboGuice Injections
-    @InjectView(R.id.listMembers)
-    private ListView membersList;
-    @InjectView(R.id.textMemberName)
-    private TextView memberName;
-    @InjectView(R.id.textMemberLevel)
-    private TextView memberLevel;
-    @InjectView(R.id.textMemberPoints)
-    private TextView memberPoints;
-    @InjectView(R.id.progressLevel)
-    private ProgressBar levelProgress;
-    @InjectView(R.id.textMemberEarnings)
-    private TextView memberEarnings;
-    @InjectView(R.id.textLatestUpdate)
-    private TextView latestUpdateText;
-
-    @InjectResource(R.anim.clockwise_refresh)
-    Animation rotation;
+    private FmGroupMember chosenMember;
 
     /**
      * Called when the activity is first created.
@@ -72,9 +30,12 @@ public class Downline extends RoboActivity implements RefreshListener {
         super.onCreate(savedInstanceState);
 
         Log.i(LOG_TAG, "onCreate");
-        this.app = DownlineApp.getInstance();
 
-        initControls();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        DownlineFragment downlineFragment = new DownlineFragment();
+        fragmentTransaction.add(R.id.fragment_placeholder, downlineFragment);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -82,197 +43,26 @@ public class Downline extends RoboActivity implements RefreshListener {
         super.onResume();
         Log.i(LOG_TAG, "onResume");
 
-        if (properSettings()) {
-            refresh();
-        } else if (this.firstTime) {
-            gotoSettings();
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setIcon(R.drawable.icon);
-            builder.setTitle(getString(R.string.noSettings));
-            builder.setMessage(getString(R.string.downlineHasNoSettings))
-                    .setCancelable(true)
-                    .setPositiveButton(getString(R.string.gotoSettings), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            gotoSettings();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.exitApp), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            closeApplication();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.firstTime = false;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.i(LOG_TAG, "onCreateOptionsMenu");
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        refreshItem = menu.findItem(R.id.menuRefresh);
-        refreshItem.getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startRefresh();
-            }
-        });
-        return true;
+    public void chosenMember(FmGroupMember member) {
+        chosenMember= member;
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        MemberFragment memberFragment = new MemberFragment();
+        fragmentTransaction.replace(R.id.fragment_placeholder, memberFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(LOG_TAG, "onOptionsItemSelected");
-        String versionName = null;
-        try {
-            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            versionName = "";
-        }
-        switch (item.getItemId()) {
-            case R.id.menuRefresh:
-                // Menu refresh has it's own onclick handler
-                return true;
-            case R.id.menuSettings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            case R.id.menuAbout:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setIcon(R.drawable.icon);
-                builder.setTitle(getString(R.string.aboutDownline));
-                builder.setMessage("Downline " + versionName)
-                        .setCancelable(true)
-                        .setPositiveButton(getString(R.string.okButtonText), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-                return true;
-            default:
-                Log.i(LOG_TAG, "Wrong option");
-                return super.onOptionsItemSelected(item);
-        }
+    public FmGroupMember getChosenMember() {
+        return chosenMember;
     }
-
-    private void initControls() {
-        membersList.addHeaderView(new View(this));
-        membersList.addFooterView(new View(this));
-        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.list_item_card);
-        membersList.setAdapter(fmGroupMemberAdapter);
-
-        membersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object chosenItem = parent.getItemAtPosition(position);
-                if (chosenItem instanceof FmGroupMember) {
-                    FmGroupMember chosenMember = (FmGroupMember) chosenItem;
-                    Log.i(LOG_TAG, "Chosen member " + chosenMember.getName());
-                    Intent intent = new Intent(view.getContext(), Member.class);
-                    intent.putExtra(DownlineApp.INTENT_NAME_MEMBER_NUMBER, chosenMember.getNumber());
-                    startActivity(intent);
-                }
-            }
-        });
-    }
-
-    private void startRefresh() {
-        /* Attach a rotating ImageView to the refresh item as an ActionView */
-        rotation.setRepeatCount(Animation.INFINITE);
-        refreshItem.getActionView().startAnimation(rotation);
-
-        String username = DownlineApp.getUsername();
-        String password = DownlineApp.getPassword();
-        DownloadTask asyncTask = new DownloadTask();
-        asyncTask.setDownlineApp(app);
-        asyncTask.setRefreshListener(this);
-        asyncTask.execute(username, password);
-    }
-
-    private boolean properSettings() {
-        return (DownlineApp.getUsername().length() > 0 && DownlineApp.getPassword().length() > 0);
-    }
-
-    private void closeApplication() {
-        this.finish();
-    }
-
-    private void gotoSettings() {
-        startActivity(new Intent(this, SettingsActivity.class));
-    }
-
-    private void updateLatestUpdate() {
-        long latestUpdate = DownlineApp.getLatestUpdate();
-        String latestUpdatePretext = getString(R.string.latestUpdate);
-        if (latestUpdate == 0) {
-            latestUpdateText.setText(latestUpdatePretext + " " + getString(R.string.latestUpdateNever) + ".");
-        } else {
-            Date latestUpdateDate = new Date();
-            latestUpdateDate.setTime(latestUpdate);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            latestUpdateText.setText(latestUpdatePretext + " " + sdf.format(latestUpdateDate));
-        }
-    }
-
-    private void render(FmGroupMember fmGroupMember) {
-        if (fmGroupMember == null) {
-            return;
-        }
-        Log.i(LOG_TAG, "fmGroupMember.getName() " + fmGroupMember.getName());
-        memberName.setText(fmGroupMember.getName());
-
-        Log.i(LOG_TAG, "fmGroupMember.getLevel() " + fmGroupMember.getLevel());
-        memberLevel.setText(String.valueOf(fmGroupMember.getLevel()));
-
-        String personalPoints = Utils.formatGetal(fmGroupMember.getPersonalPoints());
-        String groupPoints = Utils.formatGetal(fmGroupMember.getGroupPoints());
-        String combinedPoints = personalPoints + " / " + groupPoints;
-        Log.i(LOG_TAG, "fmGroupMember.getPersonalPoints() " + personalPoints);
-        Log.i(LOG_TAG, "fmGroupMember.getGroupPoints() " + groupPoints);
-        Log.i(LOG_TAG, "fmGroupMember combined points() " + combinedPoints);
-        memberPoints.setText(combinedPoints);
-
-        app.setLevelProgress(levelProgress, fmGroupMember);
-
-        Log.i(LOG_TAG, "fmGroupMember.getEarnings() " + Utils.formatGetal(fmGroupMember.getEarnings()));
-        memberEarnings.setText("€ " + Utils.formatGetal(fmGroupMember.getEarnings()));
-
-        Collections.sort(fmGroupMember.getDownline(), new Comparator<FmGroupMember>() {
-            @Override
-            public int compare(FmGroupMember lhs, FmGroupMember rhs) {
-                int lhsGroupPoints = (int)(lhs.getGroupPoints() * 100f);
-                int rhsGroupPoints = (int)(rhs.getGroupPoints() * 100f);
-                return rhsGroupPoints - lhsGroupPoints;
-            }
-        });
-        renderDownlineMembers(fmGroupMember.getDownline());
-    }
-
-    private void renderDownlineMembers(List<FmGroupMember> memberList) {
-        Log.i(LOG_TAG, "renderDownlineMembers() adding " + memberList.size() + " members to list.");
-        fmGroupMemberAdapter.clear();
-        fmGroupMemberAdapter.addAll(memberList);
-    }
-
-
-    @Override
-    public void refresh() {
-        if (refreshItem != null && refreshItem.getActionView() != null) {
-            refreshItem.getActionView().clearAnimation();
-        }
-
-        updateLatestUpdate();
-        FmGroupMember fmDownlineTree = app.getFmDownline();
-        render(fmDownlineTree);
-    }
-
 }

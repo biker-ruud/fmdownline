@@ -1,10 +1,14 @@
 package nl.fm.downline;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,11 +22,37 @@ import java.util.List;
 /**
  * @author Ruud de Jong
  */
-public class Member extends Activity {
-    private static final String LOG_TAG = "Member";
+public class MemberFragment extends Fragment {
+    private static final String LOG_TAG = "MemberFragment";
 
     private DownlineApp app;
     private FmGroupMemberAdapter<FmGroupMember> fmGroupMemberAdapter;
+    private MemberSelectionListener memberSelectionListener;
+
+    private ListView membersList;
+    private TextView memberName;
+    private TextView memberLevel;
+    private TextView memberPoints;
+    private ProgressBar levelProgress;
+    private TextView memberLine;
+    private TextView memberEmailAddress;
+    private TextView memberPhoneNumber;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof MemberSelectionListener) {
+            memberSelectionListener = (MemberSelectionListener) activity;
+        } else {
+            throw new ClassCastException(activity.toString() + " must implement MemberSelectionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        memberSelectionListener = null;
+    }
 
     /**
      * Called when the activity is first created.
@@ -37,27 +67,42 @@ public class Member extends Activity {
 
         Log.i(LOG_TAG, "onCreate");
         this.app = DownlineApp.getInstance();
-
-        setContentView(R.layout.member);
-        initControls();
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        Log.i(LOG_TAG, "onCreateView");
+        View view = inflater.inflate(R.layout.fragment_member, container, false);
+        membersList = (ListView) view.findViewById(R.id.listMembers);
+        memberName = (TextView) view.findViewById(R.id.textMemberName);
+        memberLevel = (TextView) view.findViewById(R.id.textMemberLevel);
+        memberPoints = (TextView) view.findViewById(R.id.textMemberPoints);
+        levelProgress = (ProgressBar) view.findViewById(R.id.progressLevel);
+        memberLine = (TextView) view.findViewById(R.id.textMemberLine);
+        memberEmailAddress = (TextView) view.findViewById(R.id.textMemberEmailAddress);
+        memberPhoneNumber = (TextView) view.findViewById(R.id.textMemberPhoneNumber);
+        initControls();
+        return view;
+    }
+
+
+        @Override
     public void onResume() {
         super.onResume();
         Log.i(LOG_TAG, "onResume");
 
-        Intent intent = getIntent();
-        String memberNumber = intent.getStringExtra(DownlineApp.INTENT_NAME_MEMBER_NUMBER);
+        FmGroupMember chosenMember = memberSelectionListener.getChosenMember();
+        String memberNumber = chosenMember.getNumber();
         Log.i(LOG_TAG, "Member.onResume(): " + memberNumber);
         refresh(memberNumber);
     }
 
     private void initControls() {
-        ListView membersList = (ListView) findViewById(R.id.listMembers);
-        membersList.addHeaderView(new View(this));
-        membersList.addFooterView(new View(this));
-        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(this, R.layout.list_item_card);
+        Context ctx = getActivity().getApplicationContext();
+        membersList.addHeaderView(new View(ctx));
+        membersList.addFooterView(new View(ctx));
+        fmGroupMemberAdapter = new FmGroupMemberAdapter<>(ctx, R.layout.list_item_card);
         membersList.setAdapter(fmGroupMemberAdapter);
 
     }
@@ -91,15 +136,12 @@ public class Member extends Activity {
             return;
         }
         Log.i(LOG_TAG, "fmGroupMember.getName() " + fmGroupMember.getName());
-        TextView memberName = (TextView) findViewById(R.id.textMemberName);
         memberName.setText(fmGroupMember.getName());
 
         Log.i(LOG_TAG, "fmGroupMember.getLine() " + fmGroupMember.getLine());
-        TextView memberLine = (TextView) findViewById(R.id.textMemberLine);
         memberLine.setText(String.valueOf(fmGroupMember.getLine()));
 
         Log.i(LOG_TAG, "fmGroupMember.getLevel() " + fmGroupMember.getLevel());
-        TextView memberLevel = (TextView) findViewById(R.id.textMemberLevel);
         memberLevel.setText(String.valueOf(fmGroupMember.getLevel()));
 
         String personalPoints = Utils.formatGetal(fmGroupMember.getPersonalPoints());
@@ -108,18 +150,14 @@ public class Member extends Activity {
         Log.i(LOG_TAG, "fmGroupMember.getPersonalPoints() " + personalPoints);
         Log.i(LOG_TAG, "fmGroupMember.getGroupPoints() " + groupPoints);
         Log.i(LOG_TAG, "fmGroupMember combined points() " + combinedPoints);
-        TextView memberPoints = (TextView) findViewById(R.id.textMemberPoints);
         memberPoints.setText(combinedPoints);
 
-        ProgressBar levelProgress = (ProgressBar) findViewById(R.id.progressLevel);
         app.setLevelProgress(levelProgress, fmGroupMember);
 
         Log.i(LOG_TAG, "fmGroupMember.getEmailAdress() " + Utils.getEmailAddress(fmGroupMember.getAddress()));
-        TextView memberEmailAddress = (TextView) findViewById(R.id.textMemberEmailAddress);
         memberEmailAddress.setText(Utils.getEmailAddress(fmGroupMember.getAddress()));
 
         Log.i(LOG_TAG, "fmGroupMember.getPhoneNumber() " + Utils.getPhoneNumber(fmGroupMember.getAddress()));
-        TextView memberPhoneNumber = (TextView) findViewById(R.id.textMemberPhoneNumber);
         memberPhoneNumber.setText(Utils.getPhoneNumber(fmGroupMember.getAddress()));
 
         Collections.sort(fmGroupMember.getDownline(), new Comparator<FmGroupMember>() {
