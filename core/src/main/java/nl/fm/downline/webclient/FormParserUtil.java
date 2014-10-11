@@ -29,15 +29,17 @@ final class FormParserUtil {
     static List<Form> parseForm(String body) {
         List<Form> formList = new ArrayList<Form>();
         String[] multipleEntireForms = Utils.substringsBetween(body, "<form ", "</form>");
-        for (String entireForm : multipleEntireForms) {
-            String formHeader = Utils.substringBetween(entireForm, "", ">");
-            if (entireForm == null || formHeader == null) {
-                continue;
+        if (multipleEntireForms != null) {
+            for (String entireForm : multipleEntireForms) {
+                String formHeader = Utils.substringBetween(entireForm, "", ">");
+                if (entireForm == null || formHeader == null) {
+                    continue;
+                }
+                Form response = new Form();
+                response.action = Utils.substringBetween(formHeader, "action=\"", "\"");
+                response.inputList = parseInputs(entireForm);
+                formList.add(response);
             }
-            Form response = new Form();
-            response.action = Utils.substringBetween(formHeader, "action=\"", "\"");
-            response.inputList = parseInputs(entireForm);
-            formList.add(response);
         }
         return formList;
     }

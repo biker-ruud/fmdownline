@@ -18,8 +18,9 @@ import java.util.List;
  */
 public final class FmGroupClientImpl implements FmGroupClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(FmGroupClientImpl.class);
-    private static final String HOST = "www.fmgroup.nl";
-    private static final String MIJN_OVERZICHT = "/user-zone-nl/mijn-rekening.html";
+    private static final String HOST = "nl.fmworld.com";
+    private static final String LOGIN = "/nl/login/";
+    private static final String MIJN_OVERZICHT = "/nl/distributors-zone/mijn-structuur-53/nieuwe-stamboom-34/";
     private static final String CSV_DOWNLOAD_LINK_START = "http://mlm.perfumy.fm";
     private String username;
     private String password;
@@ -32,7 +33,7 @@ public final class FmGroupClientImpl implements FmGroupClient {
         HttpsSession session = null;
         try {
             session = new HttpsSession(new URL(HttpsSession.UNSECURE_PROTOCOL + HOST));
-            InputStream inputStream = session.connect(new URL(HttpsSession.UNSECURE_PROTOCOL + HOST));
+            InputStream inputStream = session.connect(new URL(HttpsSession.UNSECURE_PROTOCOL + HOST + LOGIN));
             if (inputStream != null) {
                 if (!login(session, inputStream)) {
                     // Login gefaald.
@@ -69,7 +70,7 @@ public final class FmGroupClientImpl implements FmGroupClient {
         LOGGER.info("***************************************");
         String body = Utils.toString(inputStream);
         LOGGER.debug("Response body size: " + body.length() + " bytes.");
-        LOGGER.trace("Body: " + body);
+        //LOGGER.trace("Body: " + body);
         inputStream.close();
         List<FormParserUtil.Form> formlist = FormParserUtil.parseForm(body);
 
