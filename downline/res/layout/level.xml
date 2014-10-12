@@ -5,8 +5,8 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText" android:text="level"/>
+    <view class="nl.fm.downline.LevelView"
+          android:id="@+id/levelGraph"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"/>
 </LinearLayout>

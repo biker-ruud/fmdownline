@@ -31,7 +31,7 @@ public class TabHostActivity extends RoboTabActivity implements RefreshListener 
     @InjectView(android.R.id.tabhost)
     private TabHost tabHost;
     @InjectResource(R.anim.clockwise_refresh)
-    Animation rotation;
+    private Animation rotation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
