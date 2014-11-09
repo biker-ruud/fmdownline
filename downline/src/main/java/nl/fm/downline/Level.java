@@ -2,6 +2,9 @@ package nl.fm.downline;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
+import nl.fm.downline.common.LevelRanges;
+import nl.fm.downline.common.Utils;
 import nl.fm.downline.csv.FmGroupMember;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
@@ -17,6 +20,16 @@ public class Level extends RoboActivity {
 
     @InjectView(R.id.levelGraph)
     private LevelView levelGraph;
+    @InjectView(R.id.textCurrentLevel)
+    private TextView currentLevel;
+    @InjectView(R.id.textStartCurrentLevel)
+    private TextView startCurrentLevel;
+    @InjectView(R.id.textStopCurrentLevel)
+    private TextView stopCurrentLevel;
+    @InjectView(R.id.textProgressCurrentLevel)
+    private TextView progressCurrentLevel;
+    @InjectView(R.id.textLeftCurrentLevel)
+    private TextView leftCurrentLevel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +45,17 @@ public class Level extends RoboActivity {
         if (fmGroupMember != null) {
             levelGraph.setLevelInfo(fmGroupMember.getLevel(), fmGroupMember.getGroupPoints());
             levelGraph.invalidate();
+            currentLevel.setText(String.valueOf(fmGroupMember.getLevel()));
+            LevelRanges.Range currentRange = LevelRanges.getRange(fmGroupMember.getLevel());
+            if (currentRange != null) {
+                startCurrentLevel.setText(String.valueOf((int)currentRange.getMin()));
+                stopCurrentLevel.setText(String.valueOf((int)currentRange.getMax()));
+                float rangeWidth = currentRange.getMax() - currentRange.getMin();
+                float relativeStart = fmGroupMember.getGroupPoints() - currentRange.getMin();
+                float percentage = 100.0f * relativeStart / rangeWidth;
+                progressCurrentLevel.setText(Utils.formatGetal(percentage) + " %");
+                leftCurrentLevel.setText(Utils.formatGetal(currentRange.getMax() - fmGroupMember.getGroupPoints()));
+            }
         }
     }
 }

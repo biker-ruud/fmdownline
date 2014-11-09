@@ -38,4 +38,11 @@
     <string name="memberEmailAddress">email address</string>
     <string name="memberPhoneNumber">phone number</string>
     <string name="memberEarnings">earnings</string>
+
+    <!-- Level tab -->
+    <string name="currentLevelLabel">Current level</string>
+    <string name="startCurrentLevelLabel">Start level</string>
+    <string name="stopCurrentLevelLabel">End of level</string>
+    <string name="progressCurrentLevelLabel">Progress</string>
+    <string name="leftCurrentLevelLabel">Leftover</string>
 </resources>

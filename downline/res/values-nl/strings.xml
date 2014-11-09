@@ -38,4 +38,11 @@
     <string name="memberEmailAddress">emailadres</string>
     <string name="memberPhoneNumber">telefoon</string>
     <string name="memberEarnings">verdiensten</string>
+
+    <!-- Level tab -->
+    <string name="currentLevelLabel">Huidig level</string>
+    <string name="startCurrentLevelLabel">Start level</string>
+    <string name="stopCurrentLevelLabel">Eind van level</string>
+    <string name="progressCurrentLevelLabel">Voortgang</string>
+    <string name="leftCurrentLevelLabel">Nog te gaan</string>
 </resources>

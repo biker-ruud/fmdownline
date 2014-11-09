@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="0" android:versionName="1.0" package="nl.fm.downline">
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="21"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="nl.fm.downline.DownlineApp" android:theme="@style/LightThemeSelector">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="nl.fm.downline.DownlineApp"
+                 android:theme="@style/LightThemeSelector" android:allowBackup="true">
         <activity android:label="@string/app_name" android:name=".TabHostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -12,7 +13,6 @@
 
         <activity android:name=".Downline"/>
         <activity android:name=".Level"/>
-        <activity android:name=".MemberFragment"/>
 
         <!-- API level 16 uses 'parentActivityName' -->
         <!-- API level below 16 uses 'meta-data' -->
