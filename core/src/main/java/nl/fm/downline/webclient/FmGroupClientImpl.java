@@ -21,7 +21,7 @@ public final class FmGroupClientImpl implements FmGroupClient {
     private static final String HOST = "nl.fmworld.com";
     private static final String LOGIN = "/nl/login/";
     private static final String MIJN_OVERZICHT = "/nl/distributors-zone/mijn-structuur-53/nieuwe-stamboom-34/";
-    private static final String CSV_DOWNLOAD_LINK_START = "http://mlm.perfumy.fm";
+    private static final String CSV_DOWNLOAD_LINK_START = "http://mlm.fmgroup.pl";
     private String username;
     private String password;
 

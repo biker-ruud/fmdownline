@@ -1,9 +1,7 @@
 package nl.fm.downline;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import nl.fm.downline.common.Utils;
 import nl.fm.downline.csv.FmGroupMember;
+import roboguice.fragment.provided.RoboFragment;
+import roboguice.inject.InjectView;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,20 +22,35 @@ import java.util.List;
 /**
  * @author Ruud de Jong
  */
-public class MemberFragment extends Fragment {
+public class MemberFragment extends RoboFragment {
     private static final String LOG_TAG = "MemberFragment";
 
     private DownlineApp app;
     private FmGroupMemberAdapter<FmGroupMember> fmGroupMemberAdapter;
     private MemberSelectionListener memberSelectionListener;
 
+    @InjectView(R.id.listMembers)
     private ListView membersList;
+
+    @InjectView(R.id.textMemberName)
     private TextView memberName;
+
+    @InjectView(R.id.textMemberLevel)
     private TextView memberLevel;
+
+    @InjectView(R.id.textMemberPoints)
     private TextView memberPoints;
+
+    @InjectView(R.id.progressLevel)
     private ProgressBar levelProgress;
+
+    @InjectView(R.id.textMemberLine)
     private TextView memberLine;
+
+    @InjectView(R.id.textMemberEmailAddress)
     private TextView memberEmailAddress;
+
+    @InjectView(R.id.textMemberPhoneNumber)
     private TextView memberPhoneNumber;
 
     @Override
@@ -73,17 +88,13 @@ public class MemberFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.i(LOG_TAG, "onCreateView");
-        View view = inflater.inflate(R.layout.fragment_member, container, false);
-        membersList = (ListView) view.findViewById(R.id.listMembers);
-        memberName = (TextView) view.findViewById(R.id.textMemberName);
-        memberLevel = (TextView) view.findViewById(R.id.textMemberLevel);
-        memberPoints = (TextView) view.findViewById(R.id.textMemberPoints);
-        levelProgress = (ProgressBar) view.findViewById(R.id.progressLevel);
-        memberLine = (TextView) view.findViewById(R.id.textMemberLine);
-        memberEmailAddress = (TextView) view.findViewById(R.id.textMemberEmailAddress);
-        memberPhoneNumber = (TextView) view.findViewById(R.id.textMemberPhoneNumber);
+        return inflater.inflate(R.layout.fragment_member, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initControls();
-        return view;
     }
 
 

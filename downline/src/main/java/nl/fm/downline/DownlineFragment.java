@@ -1,9 +1,7 @@
 package nl.fm.downline;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import nl.fm.downline.common.Utils;
 import nl.fm.downline.csv.FmGroupMember;
+import roboguice.fragment.provided.RoboFragment;
+import roboguice.inject.InjectView;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -25,19 +25,32 @@ import java.util.List;
 /**
  * @author Ruud de Jong
  */
-public class DownlineFragment extends Fragment implements RefreshListener {
+public class DownlineFragment extends RoboFragment implements RefreshListener {
 
     private static final String LOG_TAG = "DownlineFragment";
 
     private FmGroupMemberAdapter<FmGroupMember> fmGroupMemberAdapter;
     private MemberSelectionListener memberSelectionListener;
 
+    @InjectView(R.id.listMembers)
     private ListView membersList;
+
+    @InjectView(R.id.textMemberName)
     private TextView memberName;
+
+    @InjectView(R.id.textMemberLevel)
     private TextView memberLevel;
+
+    @InjectView(R.id.textMemberPoints)
     private TextView memberPoints;
+
+    @InjectView(R.id.progressLevel)
     private ProgressBar levelProgress;
+
+    @InjectView(R.id.textMemberEarnings)
     private TextView memberEarnings;
+
+    @InjectView(R.id.textLatestUpdate)
     private TextView latestUpdateText;
 
     @Override
@@ -74,16 +87,13 @@ public class DownlineFragment extends Fragment implements RefreshListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.i(LOG_TAG, "onCreateView");
-        View view =  inflater.inflate(R.layout.fragment_downline, container, false);
-        membersList = (ListView) view.findViewById(R.id.listMembers);
-        memberName = (TextView) view.findViewById(R.id.textMemberName);
-        memberLevel = (TextView) view.findViewById(R.id.textMemberLevel);
-        memberPoints = (TextView) view.findViewById(R.id.textMemberPoints);
-        levelProgress = (ProgressBar) view.findViewById(R.id.progressLevel);
-        memberEarnings = (TextView) view.findViewById(R.id.textMemberEarnings);
-        latestUpdateText = (TextView) view.findViewById(R.id.textLatestUpdate);
+        return inflater.inflate(R.layout.fragment_downline, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initControls();
-        return view;
     }
 
     @Override

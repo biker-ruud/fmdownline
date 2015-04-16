@@ -9,6 +9,7 @@ import nl.fm.downline.common.LevelRanges;
 import nl.fm.downline.common.Retour;
 import nl.fm.downline.csv.FmGroupMember;
 import nl.fm.downline.csv.Parser;
+import roboguice.RoboGuice;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -38,6 +39,11 @@ public class DownlineApp extends Application {
 
     private FmGroupMember cachedParsedDownline;
     private Collection<RefreshListener> refreshListenerCollection = new HashSet<RefreshListener>();
+
+    static {
+        // Disable RoboBlender.
+        RoboGuice.setUseAnnotationDatabases(false);
+    }
 
     @Override
     public void onCreate() {
